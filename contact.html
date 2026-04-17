@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact & Commission — Studio Lumière</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* ── PAGE HERO ── */
+    .page-hero {
+      padding: 160px 8vw 80px;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+    }
+    .breadcrumb { font-family:'DM Mono',monospace; font-size:0.6rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:1rem; }
+    .breadcrumb a { color:var(--gold); text-decoration:none; }
+    .page-hero h1 { font-family:'Bodoni Moda',serif; font-size:clamp(3rem,6vw,5.5rem); font-weight:600; line-height:1.05; margin-bottom:1rem; }
+    .page-hero h1 em { font-style:italic; color:var(--gold); }
+    .page-hero p { color:var(--muted); font-size:1rem; max-width:480px; line-height:1.85; }
+
+    /* ── CONTACT LAYOUT ── */
+    .contact-section { padding:7rem 6vw; display:grid; grid-template-columns:1fr 1.2fr; gap:8vw; align-items:start; }
+
+    /* ── LEFT: INFO ── */
+    .contact-info {}
+    .info-block { margin-bottom:3rem; padding-bottom:3rem; border-bottom:1px solid var(--border); }
+    .info-block:last-child { border-bottom:none; margin-bottom:0; }
+    .info-block h3 { font-family:'Bodoni Moda',serif; font-size:1.4rem; font-weight:600; margin-bottom:1rem; }
+    .info-block p { color:var(--muted); font-size:0.93rem; line-height:1.85; margin-bottom:1rem; }
+    .contact-item { display:flex; gap:1.2rem; align-items:flex-start; margin-bottom:1.2rem; }
+    .contact-icon {
+      width:40px; height:40px; border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1rem; flex-shrink:0; color:var(--gold);
+    }
+    .contact-item-text strong { display:block; font-weight:400; font-family:'Bodoni Moda',serif; font-size:1rem; margin-bottom:0.15rem; }
+    .contact-item-text span { font-size:0.85rem; color:var(--muted); font-family:'DM Mono',monospace; }
+
+    .social-links { display:flex; flex-direction:column; gap:0.7rem; margin-top:1.5rem; }
+    .social-link {
+      display:flex; align-items:center; gap:1rem;
+      padding:0.8rem 1.2rem; border:1px solid var(--border);
+      color:var(--cream); text-decoration:none;
+      font-family:'DM Mono',monospace; font-size:0.65rem;
+      letter-spacing:0.12em; text-transform:uppercase;
+      transition:all 0.25s;
+    }
+    .social-link:hover { border-color:var(--gold); color:var(--gold); }
+    .social-link span { margin-left:auto; color:var(--muted); font-size:0.8rem; }
+
+    /* ── COMMISSION PROCESS ── */
+    .commission-steps { margin-top:2rem; }
+    .commission-step { display:flex; gap:1.2rem; margin-bottom:1.5rem; }
+    .step-dot {
+      width:32px; height:32px; border:1px solid var(--gold);
+      display:flex; align-items:center; justify-content:center;
+      font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--gold);
+      flex-shrink:0; margin-top:0.2rem;
+    }
+    .commission-step h4 { font-family:'Bodoni Moda',serif; font-size:1rem; margin-bottom:0.3rem; }
+    .commission-step p { font-size:0.85rem; color:var(--muted); line-height:1.7; }
+
+    /* ── RIGHT: FORM ── */
+    .contact-form-wrap {
+      background:var(--card);
+      border:1px solid var(--border);
+      padding:3rem;
+      position:sticky; top:110px;
+    }
+    .form-heading {
+      font-family:'Bodoni Moda',serif; font-size:1.8rem;
+      font-weight:600; margin-bottom:0.4rem;
+    }
+    .form-subhead { font-size:0.88rem; color:var(--muted); margin-bottom:2.5rem; line-height:1.7; }
+
+    .tab-switch { display:flex; margin-bottom:2.5rem; border:1px solid var(--border); }
+    .tab-btn {
+      flex:1; padding:0.75rem;
+      font-family:'DM Mono',monospace; font-size:0.62rem;
+      letter-spacing:0.12em; text-transform:uppercase;
+      background:transparent; border:none; color:var(--muted);
+      cursor:pointer; transition:all 0.25s;
+    }
+    .tab-btn.active { background:var(--gold); color:var(--bg); }
+
+    .form-panel { display:none; }
+    .form-panel.active { display:block; }
+
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
+    .form-group { margin-bottom:1.4rem; }
+    .form-group label {
+      display:block; font-family:'DM Mono',monospace;
+      font-size:0.6rem; letter-spacing:0.15em; text-transform:uppercase;
+      color:var(--gold); margin-bottom:0.6rem;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width:100%; padding:0.85rem 1rem;
+      background:rgba(255,255,255,0.04);
+      border:1px solid var(--border); color:var(--cream);
+      font-family:'Jost',sans-serif; font-size:0.95rem;
+      outline:none; transition:border-color 0.25s;
+      resize:vertical;
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color:var(--muted); }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color:var(--gold); }
+    .form-group select option { background:var(--bg2); }
+    .form-group textarea { min-height:130px; }
+
+    .size-options { display:grid; grid-template-columns:repeat(3,1fr); gap:0.6rem; }
+    .size-opt {
+      padding:0.6rem 0.3rem; text-align:center;
+      border:1px solid var(--border); cursor:pointer;
+      font-family:'DM Mono',monospace; font-size:0.6rem;
+      letter-spacing:0.08em; color:var(--muted);
+      transition:all 0.25s; user-select:none;
+    }
+    .size-opt:hover, .size-opt.selected { border-color:var(--gold); color:var(--gold); background:rgba(201,150,58,0.06); }
+
+    .budget-slider-wrap { margin-top:0.5rem; }
+    .budget-display {
+      font-family:'Bodoni Moda',serif; font-size:1.4rem;
+      color:var(--gold); margin-bottom:0.6rem; display:block;
+    }
+    input[type=range] {
+      width:100%; appearance:none; height:2px;
+      background:var(--border); outline:none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      appearance:none; width:16px; height:16px;
+      border-radius:0; background:var(--gold); cursor:pointer;
+    }
+
+    .form-checkbox { display:flex; align-items:flex-start; gap:0.8rem; margin-bottom:1.8rem; }
+    .form-checkbox input[type=checkbox] { margin-top:3px; accent-color:var(--gold); }
+    .form-checkbox label { font-size:0.83rem; color:var(--muted); line-height:1.6; cursor:pointer; }
+
+    .submit-btn {
+      width:100%; padding:1rem;
+      background:var(--gold); color:var(--bg);
+      font-family:'DM Mono',monospace; font-size:0.72rem;
+      letter-spacing:0.15em; text-transform:uppercase;
+      border:none; cursor:pointer; transition:background 0.3s, transform 0.2s;
+    }
+    .submit-btn:hover { background:var(--gold2); transform:translateY(-1px); }
+
+    /* ── SUCCESS MESSAGE ── */
+    .success-msg {
+      display:none; text-align:center; padding:3rem 1rem;
+    }
+    .success-icon { font-size:3rem; margin-bottom:1rem; display:block; }
+    .success-msg h3 { font-family:'Bodoni Moda',serif; font-size:1.6rem; margin-bottom:0.8rem; }
+    .success-msg p { color:var(--muted); line-height:1.8; }
+
+    /* ── MAP / LOCATION ── */
+    .location-section { padding:0 6vw 7rem; }
+    .location-grid { display:grid; grid-template-columns:1fr 2fr; gap:4rem; align-items:center; }
+    .location-image { position:relative; overflow:hidden; }
+    .location-image img { width:100%; display:block; filter:sepia(20%) contrast(1.1) brightness(0.8); }
+    .location-image::before {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(135deg, rgba(201,150,58,0.2) 0%, transparent 60%);
+      z-index:1;
+    }
+    .location-info h3 { font-family:'Bodoni Moda',serif; font-size:1.8rem; font-weight:600; margin-bottom:1.2rem; }
+    .location-info p { color:var(--muted); line-height:1.85; margin-bottom:2rem; }
+    .location-details { display:flex; flex-direction:column; gap:0.8rem; }
+    .loc-detail { display:flex; gap:1rem; align-items:center; }
+    .loc-detail-icon { color:var(--gold); font-size:1rem; width:20px; }
+    .loc-detail-text { font-size:0.88rem; color:var(--muted); }
+
+    /* ── FAQ ── */
+    .faq-section { padding:0 6vw 7rem; background:var(--bg2); padding-top:7rem; }
+    .faq-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:4rem; }
+    .faq-item { border:1px solid var(--border); padding:2rem; transition:border-color 0.3s; }
+    .faq-item:hover { border-color:var(--gold); }
+    .faq-q { font-family:'Bodoni Moda',serif; font-size:1.05rem; margin-bottom:0.8rem; color:var(--cream); }
+    .faq-a { font-size:0.88rem; color:var(--muted); line-height:1.8; }
+
+    @media(max-width:900px){
+      .contact-section{grid-template-columns:1fr}
+      .contact-form-wrap{position:static}
+      .location-grid{grid-template-columns:1fr}
+      .faq-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:580px){
+      .form-row{grid-template-columns:1fr}
+      .size-options{grid-template-columns:1fr 1fr}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Studio <span>Lumière</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="gallery.html" class="hide-mobile">Gallery</a></li>
+    <li><a href="contact.html" class="active">Contact</a></li>
+  </ul>
+  <a href="gallery.html" class="nav-cta">Shop Paintings</a>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <p class="breadcrumb"><a href="index.html">Home</a> / Contact</p>
+  <h1>Get in <em>Touch</em></h1>
+  <p>Whether you'd like to purchase a painting, commission an original work, or simply say hello — I'd love to hear from you.</p>
+</div>
+
+<!-- CONTACT SECTION -->
+<section class="contact-section">
+
+  <!-- LEFT INFO -->
+  <div class="contact-info">
+    <div class="info-block">
+      <span class="eyebrow">Direct Contact</span>
+      <h3>Let's Talk About Art</h3>
+      <div class="contact-item">
+        <div class="contact-icon">✉</div>
+        <div class="contact-item-text">
+          <strong>Email</strong>
+          <span>hello@studiolumiere.art</span>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">📱</div>
+        <div class="contact-item-text">
+          <strong>WhatsApp</strong>
+          <span>+91 98765 43210</span>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">⏰</div>
+        <div class="contact-item-text">
+          <strong>Response Time</strong>
+          <span>Within 24 hours, Mon–Sat</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <span class="eyebrow">Commission a Painting</span>
+      <h3>Something Made Just for You</h3>
+      <p>I accept a limited number of commissions each year. Each one is a collaboration — your vision, my craft.</p>
+      <div class="commission-steps">
+        <div class="commission-step">
+          <div class="step-dot">01</div>
+          <div>
+            <h4>Initial Consultation</h4>
+            <p>We discuss your vision, the space, the mood you want to capture, and your budget.</p>
+          </div>
+        </div>
+        <div class="commission-step">
+          <div class="step-dot">02</div>
+          <div>
+            <h4>Concept Sketch</h4>
+            <p>I prepare pencil sketches and a colour study for your approval before starting.</p>
+          </div>
+        </div>
+        <div class="commission-step">
+          <div class="step-dot">03</div>
+          <div>
+            <h4>Creation</h4>
+            <p>The painting is built over 4–12 weeks. Progress photos shared throughout.</p>
+          </div>
+        </div>
+        <div class="commission-step">
+          <div class="step-dot">04</div>
+          <div>
+            <h4>Delivery</h4>
+            <p>Crated and shipped worldwide with certificate, care guide, and full provenance.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <span class="eyebrow">Follow Along</span>
+      <h3>In the Studio</h3>
+      <p>Studio process, new works, and the stories behind the paintings.</p>
+      <div class="social-links">
+        <a href="#" class="social-link">📸 Instagram <span>@studiolumiere</span></a>
+        <a href="#" class="social-link">📌 Pinterest <span>Studio Lumière</span></a>
+        <a href="#" class="social-link">💬 WhatsApp <span>Message directly</span></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: FORM -->
+  <div class="contact-form-wrap">
+    <h2 class="form-heading">Send a Message</h2>
+    <p class="form-subhead">Use the tabs below to send a general inquiry or fill in a detailed commission brief.</p>
+    <div class="tab-switch">
+      <button class="tab-btn active" onclick="switchTab('general', this)">General Inquiry</button>
+      <button class="tab-btn" onclick="switchTab('commission', this)">Commission Brief</button>
+    </div>
+
+    <!-- GENERAL FORM -->
+    <div class="form-panel active" id="panel-general">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Your Name *</label>
+          <input type="text" placeholder="Full name" id="g-name"/>
+        </div>
+        <div class="form-group">
+          <label>Email Address *</label>
+          <input type="email" placeholder="you@email.com" id="g-email"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Subject</label>
+        <select id="g-subject">
+          <option value="">Select a topic…</option>
+          <option>Purchase Inquiry</option>
+          <option>Shipping & Delivery</option>
+          <option>Returns & Exchanges</option>
+          <option>Commission Inquiry</option>
+          <option>Press & Collaboration</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Message *</label>
+        <textarea placeholder="Tell me how I can help…" id="g-message"></textarea>
+      </div>
+      <div class="form-checkbox">
+        <input type="checkbox" id="g-newsletter"/>
+        <label for="g-newsletter">Add me to the collector list — first access to new works before public listing.</label>
+      </div>
+      <button class="submit-btn" onclick="submitForm('general')">Send Message →</button>
+    </div>
+
+    <!-- COMMISSION FORM -->
+    <div class="form-panel" id="panel-commission">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Your Name *</label>
+          <input type="text" placeholder="Full name"/>
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" placeholder="you@email.com"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Style Preference</label>
+        <select>
+          <option value="">Choose a style…</option>
+          <option>Landscape</option>
+          <option>Abstract</option>
+          <option>Portrait</option>
+          <option>Nature / Botanical</option>
+          <option>Seascape</option>
+          <option>Open to suggestions</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Preferred Medium</label>
+        <select>
+          <option value="">Choose a medium…</option>
+          <option>Oil on Canvas</option>
+          <option>Oil on Linen</option>
+          <option>Acrylic on Canvas</option>
+          <option>Watercolour on Paper</option>
+          <option>Mixed Media</option>
+          <option>Artist's Recommendation</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Preferred Size (cm)</label>
+        <div class="size-options" id="sizeOptions">
+          <div class="size-opt" onclick="selectSize(this)">30×40</div>
+          <div class="size-opt" onclick="selectSize(this)">50×70</div>
+          <div class="size-opt" onclick="selectSize(this)">60×80</div>
+          <div class="size-opt" onclick="selectSize(this)">80×100</div>
+          <div class="size-opt" onclick="selectSize(this)">90×120</div>
+          <div class="size-opt" onclick="selectSize(this)">Custom</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Budget Range (₹)</label>
+        <div class="budget-slider-wrap">
+          <span class="budget-display" id="budgetDisplay">₹ 25,000</span>
+          <input type="range" id="budgetSlider" min="15000" max="200000" step="5000" value="25000"
+            oninput="updateBudget(this.value)"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Tell Me About Your Vision *</label>
+        <textarea placeholder="Describe the subject, mood, colours, the room it will hang in, any references or inspiration…" style="min-height:140px"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Deadline / Timeline</label>
+        <input type="text" placeholder="e.g. Gift by Dec 2024, no rush, etc."/>
+      </div>
+      <div class="form-checkbox">
+        <input type="checkbox" id="c-newsletter"/>
+        <label for="c-newsletter">Add me to the collector list — first access to new works before public listing.</label>
+      </div>
+      <button class="submit-btn" onclick="submitForm('commission')">Submit Commission Brief →</button>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-msg" id="successMsg">
+      <span class="success-icon">✦</span>
+      <h3>Message Received</h3>
+      <p>Thank you for reaching out. I'll get back to you within 24 hours with care and attention. In the meantime, keep exploring the gallery.</p>
+      <a href="gallery.html" class="btn-gold" style="margin-top:2rem; display:inline-block;">Browse Gallery</a>
+    </div>
+  </div>
+</section>
+
+<!-- STUDIO LOCATION -->
+<section class="location-section">
+  <div class="location-grid">
+    <div class="location-image">
+      <img src="https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=600&q=85" alt="Art Studio" loading="lazy"/>
+    </div>
+    <div class="location-info">
+      <span class="eyebrow">The Studio</span>
+      <h3>Based in Bengaluru,<br>Painting for the World</h3>
+      <p>The studio is a light-filled space in Indiranagar where most of the work is made. Studio visits are available by appointment for serious collectors.</p>
+      <div class="location-details">
+        <div class="loc-detail">
+          <span class="loc-detail-icon">📍</span>
+          <span class="loc-detail-text">Indiranagar, Bengaluru, Karnataka 560038</span>
+        </div>
+        <div class="loc-detail">
+          <span class="loc-detail-icon">🕐</span>
+          <span class="loc-detail-text">Studio visits: By appointment only, Mon–Sat 10am–6pm</span>
+        </div>
+        <div class="loc-detail">
+          <span class="loc-detail-icon">🚚</span>
+          <span class="loc-detail-text">Ships worldwide via DHL / FedEx with full insurance</span>
+        </div>
+        <div class="loc-detail">
+          <span class="loc-detail-icon">🇮🇳</span>
+          <span class="loc-detail-text">Free shipping within India on all orders above ₹20,000</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div style="text-align:center">
+    <span class="eyebrow">Common Questions</span>
+    <h2 class="section-title">Before You <em>Reach Out</em></h2>
+  </div>
+  <div class="faq-grid">
+    <div class="faq-item">
+      <h3 class="faq-q">Are all paintings truly original?</h3>
+      <p class="faq-a">Every single work is a one-of-a-kind original. No prints, no reproductions, no editions. Each painting comes with a signed certificate of authenticity documenting the work's provenance.</p>
+    </div>
+    <div class="faq-item">
+      <h3 class="faq-q">How are paintings packaged for shipping?</h3>
+      <p class="faq-a">Works on canvas are either rolled (for large works) or corner-protected and wrapped in acid-free tissue, then double-boxed. Framed and glazed works are additionally crated in custom wooden cases.</p>
+    </div>
+    <div class="faq-item">
+      <h3 class="faq-q">What is your returns policy?</h3>
+      <p class="faq-a">If a painting doesn't suit your space, you may return it within 30 days of delivery in its original packaging for a full refund. Commissioned works are non-refundable once work has begun.</p>
+    </div>
+    <div class="faq-item">
+      <h3 class="faq-q">How long does a commission take?</h3>
+      <p class="faq-a">Depending on size and complexity, commissions typically take 4 to 12 weeks from concept approval. I take a limited number of commissions per year to ensure full attention to each work.</p>
+    </div>
+    <div class="faq-item">
+      <h3 class="faq-q">Do you offer payment instalments?</h3>
+      <p class="faq-a">Yes. For works above ₹30,000, a 50% deposit secures the painting and the balance is payable before dispatch. For commissions, 50% is required upfront and 50% on completion.</p>
+    </div>
+    <div class="faq-item">
+      <h3 class="faq-q">Can I see a painting in person?</h3>
+      <p class="faq-a">Studio visits are welcome by appointment in Bengaluru. For collectors elsewhere, high-resolution photographs in different lighting conditions and a video walkthrough of the work can be arranged.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="logo">Studio <span>Lumière</span></a>
+      <p>Original paintings crafted with intention and shipped worldwide.</p>
+    </div>
+    <div class="footer-col"><h4>Navigate</h4><ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Styles</h4><ul>
+      <li><a href="gallery.html">Landscapes</a></li>
+      <li><a href="gallery.html">Abstracts</a></li>
+      <li><a href="gallery.html">Portraits</a></li>
+      <li><a href="gallery.html">Seascapes</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Contact</h4><ul>
+      <li><a href="mailto:hello@studiolumiere.art">hello@studiolumiere.art</a></li>
+      <li><a href="#">WhatsApp</a></li>
+      <li><a href="#">Instagram</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2024 Studio Lumière. All rights reserved.</span>
+    <div class="footer-social"><a href="#">Instagram</a><a href="#">Pinterest</a></div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+function switchTab(tab, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+}
+
+function selectSize(el) {
+  document.querySelectorAll('.size-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function updateBudget(val) {
+  const num = parseInt(val);
+  document.getElementById('budgetDisplay').textContent = '₹ ' + num.toLocaleString('en-IN');
+}
+
+function submitForm(type) {
+  const name = type === 'general' ? document.getElementById('g-name').value : null;
+  const email = type === 'general' ? document.getElementById('g-email').value : null;
+  if(type === 'general' && (!name || !email)) {
+    showToast('Please fill in your name and email.');
+    return;
+  }
+  document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector('.tab-switch').style.display = 'none';
+  document.getElementById('successMsg').style.display = 'block';
+  document.querySelector('.form-heading').style.display = 'none';
+  document.querySelector('.form-subhead').style.display = 'none';
+  showToast('✦ Message sent successfully!');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>

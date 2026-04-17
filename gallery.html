@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gallery — Studio Lumière</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* ── PAGE HERO ── */
+    .page-hero {
+      padding: 160px 8vw 80px;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: flex-end;
+      flex-wrap: wrap; gap: 2rem;
+    }
+    .page-hero h1 { font-family:'Bodoni Moda',serif; font-size:clamp(3rem,6vw,5.5rem); font-weight:600; line-height:1.05; }
+    .page-hero h1 em { font-style:italic; color:var(--gold); }
+    .page-hero-right { text-align:right; }
+    .page-hero-right p { color:var(--muted); font-size:0.9rem; max-width:320px; line-height:1.8; }
+    .breadcrumb {
+      font-family:'DM Mono',monospace; font-size:0.6rem;
+      letter-spacing:0.15em; text-transform:uppercase; color:var(--muted);
+      margin-bottom:1rem;
+    }
+    .breadcrumb a { color:var(--gold); text-decoration:none; }
+
+    /* ── FILTER + SORT BAR ── */
+    .filter-bar {
+      padding: 2rem 6vw;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap; gap: 1.5rem;
+      position: sticky; top: 80px; z-index: 100;
+      background: rgba(14,12,9,0.95);
+      backdrop-filter: blur(12px);
+    }
+    .filter-tabs { display:flex; gap:0.5rem; flex-wrap:wrap; }
+    .filter-tab {
+      font-family:'DM Mono',monospace; font-size:0.62rem;
+      letter-spacing:0.14em; text-transform:uppercase;
+      padding:0.5rem 1.2rem;
+      border:1px solid var(--border); color:var(--muted);
+      background:transparent; cursor:pointer; transition:all 0.25s;
+    }
+    .filter-tab:hover, .filter-tab.active {
+      background:var(--gold); border-color:var(--gold); color:var(--bg);
+    }
+    .sort-select {
+      font-family:'DM Mono',monospace; font-size:0.62rem;
+      letter-spacing:0.12em; text-transform:uppercase;
+      background:transparent; border:1px solid var(--border);
+      color:var(--cream); padding:0.5rem 1rem; cursor:pointer;
+      outline:none;
+    }
+    .sort-select option { background:var(--bg2); color:var(--cream); }
+    .filter-right { display:flex; align-items:center; gap:1.5rem; }
+    .results-count {
+      font-family:'DM Mono',monospace; font-size:0.6rem;
+      letter-spacing:0.1em; color:var(--muted);
+    }
+    .view-toggle { display:flex; gap:0.3rem; }
+    .view-btn {
+      padding:0.4rem 0.7rem; background:transparent;
+      border:1px solid var(--border); color:var(--muted);
+      cursor:pointer; font-size:0.75rem; transition:all 0.25s;
+    }
+    .view-btn.active { background:var(--gold); border-color:var(--gold); color:var(--bg); }
+
+    /* ── GALLERY GRID ── */
+    .gallery-section { padding: 4rem 6vw 7rem; }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+    .gallery-grid.list-view { grid-template-columns: 1fr; }
+
+    /* staggered offset */
+    .painting-card { animation: fadeUp 0.5s ease both; }
+    .painting-card:nth-child(1){animation-delay:0.05s}
+    .painting-card:nth-child(2){animation-delay:0.1s}
+    .painting-card:nth-child(3){animation-delay:0.15s}
+    .painting-card:nth-child(4){animation-delay:0.2s}
+    .painting-card:nth-child(5){animation-delay:0.25s}
+    .painting-card:nth-child(6){animation-delay:0.3s}
+    .painting-card:nth-child(7){animation-delay:0.35s}
+    .painting-card:nth-child(8){animation-delay:0.4s}
+    .painting-card:nth-child(9){animation-delay:0.45s}
+
+    .painting-card {
+      background:var(--card); border:1px solid var(--border);
+      overflow:hidden; cursor:pointer;
+      transition:transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+    .painting-card:hover {
+      transform:translateY(-5px);
+      border-color:rgba(201,150,58,0.4);
+      box-shadow:0 20px 50px rgba(0,0,0,0.4);
+    }
+    .card-img-wrap { position:relative; overflow:hidden; aspect-ratio:4/5; }
+    .gallery-grid.list-view .card-img-wrap { aspect-ratio:16/7; }
+    .card-img-wrap img {
+      width:100%; height:100%; object-fit:cover; display:block;
+      transition:transform 0.6s ease; filter:brightness(0.92) contrast(1.05);
+    }
+    .painting-card:hover .card-img-wrap img { transform:scale(1.07); }
+
+    .card-badge-wrap { position:absolute; top:1rem; left:1rem; display:flex; flex-direction:column; gap:0.4rem; }
+    .badge {
+      font-family:'DM Mono',monospace; font-size:0.55rem;
+      letter-spacing:0.1em; text-transform:uppercase;
+      padding:0.28rem 0.65rem; display:inline-block;
+    }
+    .badge-new { background:var(--gold); color:var(--bg); }
+    .badge-popular { background:var(--rust); color:var(--cream); }
+    .badge-sold { background:#333; color:var(--muted); }
+    .badge-commission { background:transparent; border:1px solid var(--gold); color:var(--gold); }
+
+    .card-hover-layer {
+      position:absolute; inset:0;
+      background:rgba(14,12,9,0.75);
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center; gap:0.8rem;
+      opacity:0; transition:opacity 0.3s;
+    }
+    .painting-card:hover .card-hover-layer { opacity:1; }
+    .hover-btn {
+      font-family:'DM Mono',monospace; font-size:0.62rem;
+      letter-spacing:0.12em; text-transform:uppercase;
+      padding:0.65rem 1.8rem; cursor:pointer; transition:all 0.25s;
+      width:170px; text-align:center;
+    }
+    .hover-btn.primary { background:var(--gold); border:1px solid var(--gold); color:var(--bg); }
+    .hover-btn.secondary { background:transparent; border:1px solid rgba(242,234,216,0.4); color:var(--cream); }
+    .hover-btn:hover { background:var(--gold2); border-color:var(--gold2); color:var(--bg); }
+
+    .card-body { padding:1.5rem 1.6rem; }
+    .card-meta-top {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:0.5rem;
+    }
+    .card-cat {
+      font-family:'DM Mono',monospace; font-size:0.58rem;
+      letter-spacing:0.15em; text-transform:uppercase; color:var(--gold);
+    }
+    .card-year { font-family:'DM Mono',monospace; font-size:0.58rem; color:var(--muted); }
+    .card-title {
+      font-family:'Bodoni Moda',serif; font-size:1.25rem;
+      font-weight:600; margin-bottom:0.3rem;
+      color:var(--cream);
+    }
+    .card-medium { font-size:0.85rem; color:var(--muted); margin-bottom:1.2rem; }
+    .card-bottom { display:flex; justify-content:space-between; align-items:center; }
+    .card-price { font-family:'Bodoni Moda',serif; font-size:1.5rem; font-weight:600; color:var(--cream); }
+    .card-price small { font-family:'DM Mono',monospace; font-size:0.58rem; color:var(--muted); display:block; }
+    .quick-add {
+      font-family:'DM Mono',monospace; font-size:0.58rem;
+      letter-spacing:0.1em; text-transform:uppercase;
+      padding:0.5rem 1rem; background:transparent;
+      border:1px solid var(--border); color:var(--muted);
+      cursor:pointer; transition:all 0.25s;
+    }
+    .quick-add:hover { background:var(--gold); border-color:var(--gold); color:var(--bg); }
+
+    /* LIST VIEW overrides */
+    .gallery-grid.list-view .painting-card {
+      display:grid; grid-template-columns:300px 1fr;
+    }
+    .gallery-grid.list-view .card-img-wrap { aspect-ratio:unset; }
+    .gallery-grid.list-view .card-body {
+      display:flex; flex-direction:column; justify-content:center;
+      padding:2rem 2.5rem;
+    }
+
+    /* ── LOAD MORE ── */
+    .load-more-wrap { text-align:center; margin-top:4rem; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,0.85); z-index:600;
+      align-items:center; justify-content:center; padding:2rem;
+    }
+    .modal-overlay.open { display:flex; }
+    .modal {
+      background:var(--bg2); border:1px solid var(--border);
+      max-width:900px; width:100%;
+      display:grid; grid-template-columns:1.2fr 1fr;
+      max-height:90vh; overflow:hidden;
+      animation:fadeUp 0.3s ease;
+    }
+    .modal-img { overflow:hidden; }
+    .modal-img img { width:100%; height:100%; object-fit:cover; display:block; }
+    .modal-body {
+      padding:3rem; overflow-y:auto;
+      display:flex; flex-direction:column;
+    }
+    .modal-close {
+      position:absolute; top:1rem; right:1.5rem;
+      background:none; border:none; color:var(--cream);
+      font-family:'DM Mono',monospace; font-size:1.2rem; cursor:pointer;
+    }
+    .modal-cat {
+      font-family:'DM Mono',monospace; font-size:0.6rem;
+      letter-spacing:0.18em; text-transform:uppercase;
+      color:var(--gold); margin-bottom:0.6rem;
+    }
+    .modal-title {
+      font-family:'Bodoni Moda',serif; font-size:2rem;
+      font-weight:600; margin-bottom:0.4rem;
+    }
+    .modal-sub { font-family:'DM Mono',monospace; font-size:0.62rem; color:var(--muted); margin-bottom:1.5rem; }
+    .modal-desc { font-size:0.93rem; color:rgba(242,234,216,0.65); line-height:1.85; margin-bottom:2rem; }
+    .modal-specs {
+      display:grid; grid-template-columns:1fr 1fr; gap:1rem;
+      border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+      padding:1.2rem 0; margin-bottom:1.8rem;
+    }
+    .spec-label { font-family:'DM Mono',monospace; font-size:0.55rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--gold); display:block; margin-bottom:0.2rem; }
+    .spec-val { font-size:0.92rem; color:var(--cream); }
+    .modal-price { font-family:'Bodoni Moda',serif; font-size:2.2rem; color:var(--gold); margin-bottom:1.8rem; }
+    .modal-btns { display:flex; flex-direction:column; gap:0.8rem; }
+    .modal-btns button { width:100%; }
+
+    @media(max-width:900px){
+      .gallery-grid{grid-template-columns:1fr 1fr}
+      .modal{grid-template-columns:1fr}
+      .modal-img{height:40vw}
+      .page-hero{padding-top:130px}
+    }
+    @media(max-width:580px){
+      .gallery-grid, .gallery-grid.list-view{grid-template-columns:1fr}
+      .gallery-grid.list-view .painting-card{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Studio <span>Lumière</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="gallery.html" class="active">Gallery</a></li>
+    <li><a href="contact.html" class="hide-mobile">Contact</a></li>
+  </ul>
+  <a href="contact.html" class="nav-cta">Commission</a>
+</nav>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div>
+    <p class="breadcrumb"><a href="index.html">Home</a> / Gallery</p>
+    <h1>The <em>Gallery</em></h1>
+  </div>
+  <div class="page-hero-right">
+    <p>Each painting is an original work — hand-signed, documented, and shipped worldwide. Browse, filter, and find the one that speaks to you.</p>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="filter-tabs" id="filterTabs">
+    <button class="filter-tab active" onclick="filterGallery('all',this)">All Works</button>
+    <button class="filter-tab" onclick="filterGallery('landscape',this)">Landscape</button>
+    <button class="filter-tab" onclick="filterGallery('abstract',this)">Abstract</button>
+    <button class="filter-tab" onclick="filterGallery('portrait',this)">Portrait</button>
+    <button class="filter-tab" onclick="filterGallery('nature',this)">Nature</button>
+    <button class="filter-tab" onclick="filterGallery('seascape',this)">Seascape</button>
+  </div>
+  <div class="filter-right">
+    <span class="results-count" id="resultCount">12 works</span>
+    <select class="sort-select" onchange="sortGallery(this.value)">
+      <option value="default">Sort: Default</option>
+      <option value="price-asc">Price: Low → High</option>
+      <option value="price-desc">Price: High → Low</option>
+      <option value="newest">Newest First</option>
+    </select>
+    <div class="view-toggle">
+      <button class="view-btn active" title="Grid" onclick="setView('grid',this)">⊞</button>
+      <button class="view-btn" title="List" onclick="setView('list',this)">☰</button>
+    </div>
+  </div>
+</div>
+
+<!-- GALLERY -->
+<section class="gallery-section">
+  <div class="gallery-grid" id="galleryGrid"></div>
+  <div class="load-more-wrap">
+    <button class="btn-outline" onclick="loadMore()">Load More Works →</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="logo">Studio <span>Lumière</span></a>
+      <p>Original paintings crafted with intention and shipped worldwide.</p>
+    </div>
+    <div class="footer-col"><h4>Navigate</h4><ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Styles</h4><ul>
+      <li><a href="#">Landscapes</a></li>
+      <li><a href="#">Abstracts</a></li>
+      <li><a href="#">Portraits</a></li>
+      <li><a href="#">Seascapes</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Contact</h4><ul>
+      <li><a href="mailto:hello@studiolumiere.art">hello@studiolumiere.art</a></li>
+      <li><a href="#">WhatsApp</a></li>
+      <li><a href="#">Instagram</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2024 Studio Lumière. All rights reserved.</span>
+    <div class="footer-social">
+      <a href="#">Instagram</a><a href="#">Pinterest</a><a href="#">WhatsApp</a>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <button class="modal-close" onclick="closeModalDirect()">✕</button>
+  <div class="modal" id="modalBox">
+    <div class="modal-img"><img id="mImg" src="" alt=""/></div>
+    <div class="modal-body">
+      <p class="modal-cat" id="mCat"></p>
+      <h2 class="modal-title" id="mTitle"></h2>
+      <p class="modal-sub" id="mSub"></p>
+      <p class="modal-desc" id="mDesc"></p>
+      <div class="modal-specs">
+        <div><span class="spec-label">Medium</span><span class="spec-val" id="mMedium"></span></div>
+        <div><span class="spec-label">Size</span><span class="spec-val" id="mSize"></span></div>
+        <div><span class="spec-label">Year</span><span class="spec-val" id="mYear"></span></div>
+        <div><span class="spec-label">Status</span><span class="spec-val" id="mStatus"></span></div>
+      </div>
+      <div class="modal-price" id="mPrice"></div>
+      <div class="modal-btns">
+        <button class="btn-gold" id="mCartBtn">Add to Cart</button>
+        <a href="contact.html" class="btn-outline" style="text-align:center;">Inquire About This Work</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ALL_PAINTINGS = [
+  { id:1, title:"Monsoon Light", cat:"landscape", medium:"Oil on Canvas", size:"60×80 cm", year:2024, price:38000, badge:"new", status:"Available",
+    desc:"Soft Kerala backwater rain captured in translucent oil glazes. The painting took four months to complete, built in thin luminous layers that give the water its glassy depth.",
+    img:"https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=700&q=85" },
+  { id:2, title:"Urban Reverie", cat:"abstract", medium:"Acrylic on Canvas", size:"75×100 cm", year:2024, price:45000, badge:"popular", status:"Available",
+    desc:"The energy of a city at dusk — abstracted into gestural marks and vivid colour fields. Thick impasto passages contrast with delicate glazed areas.",
+    img:"https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=700&q=85" },
+  { id:3, title:"The Still Morning", cat:"nature", medium:"Watercolour on Paper", size:"50×70 cm", year:2023, price:22000, badge:null, status:"Available",
+    desc:"Dew-covered meadow painted at first light. The transparent watercolour washes create an ethereal atmosphere of pure possibility.",
+    img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=85" },
+  { id:4, title:"Contemplation", cat:"portrait", medium:"Oil on Linen", size:"50×70 cm", year:2024, price:55000, badge:"popular", status:"Available",
+    desc:"A quiet interior portrait study in warm artificial light. The subject's gaze turns inward, inviting the viewer into a shared stillness.",
+    img:"https://images.unsplash.com/photo-1515405295579-ba7b45403062?w=700&q=85" },
+  { id:5, title:"Desert Bloom", cat:"landscape", medium:"Mixed Media", size:"90×90 cm", year:2023, price:62000, badge:null, status:"Available",
+    desc:"Rajasthan sands at magic hour — when the impossible happens and wildflowers burst through cracked earth. Gold leaf highlights catch the light.",
+    img:"https://images.unsplash.com/photo-1574182245530-967d9b3831af?w=700&q=85" },
+  { id:6, title:"Fire & Form", cat:"abstract", medium:"Oil on Canvas", size:"80×100 cm", year:2024, price:70000, badge:"new", status:"Available",
+    desc:"Gestural marks and warm pigments collide into controlled chaos. This work was painted in a single session over twelve uninterrupted hours.",
+    img:"https://images.unsplash.com/photo-1547891654-e66ed7ebb968?w=700&q=85" },
+  { id:7, title:"The Endless Shore", cat:"seascape", medium:"Oil on Canvas", size:"120×90 cm", year:2023, price:85000, badge:"sold", status:"Sold",
+    desc:"The Konkan coastline at dusk. Horizon dissolved into a wash of rose and amber, the sea utterly calm. A large and commanding work.",
+    img:"https://images.unsplash.com/photo-1551913902-c92207136625?w=700&q=85" },
+  { id:8, title:"Through the Trees", cat:"nature", medium:"Oil on Canvas", size:"60×80 cm", year:2024, price:55000, badge:null, status:"Available",
+    desc:"Light fracturing through a Western Ghats forest canopy. Each ray traced in translucent paint over a warm underpainting.",
+    img:"https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?w=700&q=85" },
+  { id:9, title:"Blue Hour", cat:"seascape", medium:"Acrylic on Canvas", size:"80×60 cm", year:2024, price:42000, badge:"new", status:"Available",
+    desc:"The deep blue that fills the world in the minutes after sunset. Painted from memory, infused with emotion. Simple, pure, and powerful.",
+    img:"https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=700&q=85" },
+  { id:10, title:"Golden Hour Study", cat:"landscape", medium:"Oil on Board", size:"30×40 cm", year:2023, price:18000, badge:null, status:"Available",
+    desc:"A small intimate plein-air study painted directly in fading light. What it lacks in scale it more than compensates for in immediacy.",
+    img:"https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=700&q=85" },
+  { id:11, title:"Inner Landscape", cat:"abstract", medium:"Mixed Media on Canvas", size:"100×120 cm", year:2024, price:90000, badge:"popular", status:"Available",
+    desc:"Collage, oil, and graphite combine in a deeply personal work exploring memory and place. The layered surface rewards sustained looking.",
+    img:"https://images.unsplash.com/photo-1549490349-8643362247b5?w=700&q=85" },
+  { id:12, title:"The Morning Worker", cat:"portrait", medium:"Oil on Canvas", size:"70×90 cm", year:2023, price:68000, badge:null, status:"Commission",
+    desc:"A study of dignity in everyday labour. Painted from a series of quick sketches made in a Bengaluru market at dawn.",
+    img:"https://images.unsplash.com/photo-1578301978018-3005759f48f7?w=700&q=85" },
+];
+
+let visiblePaintings = [...ALL_PAINTINGS];
+let cart = [];
+let currentModal = null;
+
+function renderGallery(paintings) {
+  const grid = document.getElementById('galleryGrid');
+  document.getElementById('resultCount').textContent = `${paintings.length} work${paintings.length!==1?'s':''}`;
+  grid.innerHTML = paintings.map((p, i) => `
+    <div class="painting-card" style="animation-delay:${i*0.06}s" data-cat="${p.cat}">
+      <div class="card-img-wrap">
+        <img src="${p.img}" alt="${p.title}" loading="lazy"/>
+        <div class="card-badge-wrap">
+          ${p.badge==='new' ? '<span class="badge badge-new">New</span>' : ''}
+          ${p.badge==='popular' ? '<span class="badge badge-popular">Popular</span>' : ''}
+          ${p.badge==='sold' ? '<span class="badge badge-sold">Sold</span>' : ''}
+          ${p.badge==='commission' ? '<span class="badge badge-commission">Commission</span>' : ''}
+        </div>
+        <div class="card-hover-layer">
+          ${p.status !== 'Sold' ? `<button class="hover-btn primary" onclick="event.stopPropagation();addToCart(${p.id})">Add to Cart</button>` : ''}
+          <button class="hover-btn secondary" onclick="event.stopPropagation();openModal(${p.id})">View Details</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-meta-top">
+          <span class="card-cat">${p.cat}</span>
+          <span class="card-year">${p.year}</span>
+        </div>
+        <h3 class="card-title">${p.title}</h3>
+        <p class="card-medium">${p.medium} · ${p.size}</p>
+        <div class="card-bottom">
+          <div class="card-price">
+            ${p.status === 'Sold' ? '<span style="color:var(--muted);font-size:1rem;font-family:\'DM Mono\',monospace;">SOLD</span>' : `₹ ${p.price.toLocaleString('en-IN')}`}
+            <small>Original · incl. certificate</small>
+          </div>
+          ${p.status !== 'Sold' ? `<button class="quick-add" onclick="event.stopPropagation();addToCart(${p.id})">Add +</button>` : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterGallery(cat, btn) {
+  document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  visiblePaintings = cat === 'all' ? [...ALL_PAINTINGS] : ALL_PAINTINGS.filter(p => p.cat === cat);
+  renderGallery(visiblePaintings);
+}
+
+function sortGallery(val) {
+  if(val === 'price-asc') visiblePaintings.sort((a,b) => a.price - b.price);
+  else if(val === 'price-desc') visiblePaintings.sort((a,b) => b.price - a.price);
+  else if(val === 'newest') visiblePaintings.sort((a,b) => b.year - a.year);
+  else visiblePaintings = ALL_PAINTINGS.filter(p => visiblePaintings.find(vp => vp.id === p.id));
+  renderGallery(visiblePaintings);
+}
+
+function setView(v, btn) {
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const grid = document.getElementById('galleryGrid');
+  grid.classList.toggle('list-view', v === 'list');
+}
+
+function loadMore() { showToast('All works are displayed!'); }
+
+function addToCart(id) {
+  const p = ALL_PAINTINGS.find(x => x.id === id);
+  if(!p) return;
+  cart.push(p.title);
+  showToast(`✦ "${p.title}" added to cart (${cart.length})`);
+}
+
+function openModal(id) {
+  const p = ALL_PAINTINGS.find(x => x.id === id);
+  if(!p) return;
+  currentModal = p;
+  document.getElementById('mImg').src = p.img;
+  document.getElementById('mImg').alt = p.title;
+  document.getElementById('mCat').textContent = p.cat.toUpperCase() + ' · ' + p.year;
+  document.getElementById('mTitle').textContent = p.title;
+  document.getElementById('mSub').textContent = p.medium + ' · ' + p.size;
+  document.getElementById('mDesc').textContent = p.desc;
+  document.getElementById('mMedium').textContent = p.medium;
+  document.getElementById('mSize').textContent = p.size;
+  document.getElementById('mYear').textContent = p.year;
+  document.getElementById('mStatus').textContent = p.status;
+  document.getElementById('mStatus').style.color = p.status==='Available' ? '#6aad6a' : p.status==='Sold' ? 'var(--muted)' : 'var(--gold)';
+  document.getElementById('mPrice').textContent = p.status === 'Sold' ? 'SOLD' : '₹ ' + p.price.toLocaleString('en-IN');
+  const btn = document.getElementById('mCartBtn');
+  btn.textContent = p.status === 'Sold' ? 'Inquire Similar' : 'Add to Cart';
+  btn.onclick = p.status !== 'Sold' ? () => { addToCart(p.id); closeModalDirect(); } : () => window.location = 'contact.html';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal(e) { if(e.target === document.getElementById('modalOverlay')) closeModalDirect(); }
+function closeModalDirect() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModalDirect(); });
+renderGallery(visiblePaintings);
+</script>
+</body>
+</html>

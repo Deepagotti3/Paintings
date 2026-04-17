@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Studio Lumière — Original Paintings</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-top: 80px;
+      overflow: hidden;
+    }
+    .hero-left {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 5rem 5vw 5rem 8vw;
+      position: relative;
+    }
+    .hero-left::before {
+      content: '';
+      position: absolute; top: 0; right: 0; bottom: 0;
+      width: 1px; background: var(--border);
+    }
+    .hero-number {
+      font-family: 'Bodoni Moda', serif;
+      font-size: clamp(7rem, 14vw, 14rem);
+      font-weight: 700;
+      color: rgba(201,150,58,0.07);
+      line-height: 1;
+      position: absolute;
+      top: 10%; left: 5vw;
+      pointer-events: none;
+      user-select: none;
+    }
+    .hero-title {
+      font-family: 'Bodoni Moda', serif;
+      font-size: clamp(3.2rem, 5.5vw, 6rem);
+      font-weight: 600;
+      line-height: 1.0;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    .hero-title em { font-style: italic; color: var(--gold); }
+    .hero-desc {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 380px;
+      margin-bottom: 3rem;
+      font-weight: 300;
+      line-height: 1.85;
+    }
+    .hero-actions { display: flex; align-items: center; gap: 2rem; }
+    .hero-scroll {
+      position: absolute; bottom: 3rem; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    }
+    .hero-scroll span {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      writing-mode: vertical-rl;
+    }
+    .scroll-line {
+      width: 1px; height: 50px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollLine 2s ease-in-out infinite;
+    }
+    @keyframes scrollLine {
+      0%,100% { transform: scaleY(1); opacity: 1; }
+      50% { transform: scaleY(0.4); opacity: 0.4; }
+    }
+
+    /* RIGHT PANEL - collage */
+    .hero-right {
+      position: relative;
+      overflow: hidden;
+      background: var(--bg2);
+    }
+    .hero-collage { position: absolute; inset: 0; }
+    .collage-img {
+      position: absolute;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .collage-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 8s ease; }
+    .collage-img:hover img { transform: scale(1.05); }
+    .c1 { top: 5%; left: 5%; width: 60%; height: 52%; }
+    .c2 { top: 5%; right: 5%; width: 32%; height: 32%; }
+    .c3 { bottom: 3%; left: 5%; width: 38%; height: 40%; }
+    .c4 { bottom: 3%; right: 5%; width: 54%; height: 36%; border: 2px solid var(--border); }
+    .hero-pill {
+      position: absolute; bottom: 48%; right: 5%;
+      background: var(--gold);
+      color: var(--bg);
+      padding: 0.6rem 1.2rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      z-index: 2;
+    }
+    .hero-stat {
+      position: absolute; bottom: 30%; left: 37%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 1rem 1.5rem;
+      text-align: center;
+      z-index: 2;
+      animation: float 5s ease-in-out infinite;
+    }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+    .hero-stat-num {
+      font-family: 'Bodoni Moda', serif;
+      font-size: 2rem; font-weight: 700;
+      color: var(--gold); display: block;
+    }
+    .hero-stat-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted);
+    }
+
+    /* ── MARQUEE ── */
+    /* (in shared css) */
+
+    /* ── ABOUT STRIP ── */
+    .about-strip {
+      padding: 7rem 8vw;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8vw;
+      align-items: center;
+    }
+    .about-img-wrap {
+      position: relative;
+    }
+    .about-img-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -20px;
+      border: 1px solid var(--border);
+      z-index: 0;
+    }
+    .about-img-wrap img {
+      width: 100%;
+      display: block;
+      position: relative;
+      z-index: 1;
+      filter: sepia(10%) contrast(1.05);
+    }
+    .about-tag {
+      position: absolute; bottom: -1.5rem; right: -1.5rem;
+      z-index: 2;
+      background: var(--gold);
+      color: var(--bg);
+      padding: 1.2rem 1.8rem;
+      font-family: 'Bodoni Moda', serif;
+      font-size: 1rem;
+    }
+    .about-tag span {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      display: block;
+    }
+    .about-text h2 { margin-bottom: 1.5rem; }
+    .about-text p { color: var(--muted); margin-bottom: 1.5rem; font-weight: 300; line-height: 1.9; }
+    .about-facts {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 1.5rem; margin: 2.5rem 0;
+      border-top: 1px solid var(--border);
+      padding-top: 2rem;
+    }
+    .fact-num {
+      font-family: 'Bodoni Moda', serif;
+      font-size: 2.5rem; font-weight: 600;
+      color: var(--gold); display: block;
+    }
+    .fact-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.6rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted);
+    }
+
+    /* ── FEATURED GRID ── */
+    .featured-section { padding: 7rem 6vw; background: var(--bg2); }
+    .section-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 4rem; }
+    .featured-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto auto;
+      gap: 1.5rem;
+    }
+    .feat-card {
+      position: relative; overflow: hidden;
+      background: var(--card);
+      cursor: pointer;
+      transition: transform 0.4s ease;
+    }
+    .feat-card:hover { transform: translateY(-5px); }
+    .feat-card.large { grid-column: span 2; }
+    .feat-card-img {
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      background: #111;
+    }
+    .feat-card.large .feat-card-img { aspect-ratio: 16/9; }
+    .feat-card-img img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      transition: transform 0.7s ease;
+      filter: brightness(0.9) contrast(1.05);
+    }
+    .feat-card:hover .feat-card-img img { transform: scale(1.06); }
+    .feat-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(14,12,9,0.9) 0%, transparent 60%);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 1.8rem;
+    }
+    .feat-cat {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 0.4rem;
+    }
+    .feat-title {
+      font-family: 'Bodoni Moda', serif;
+      font-size: 1.3rem; font-weight: 600;
+      color: var(--cream); margin-bottom: 0.3rem;
+    }
+    .feat-card.large .feat-title { font-size: 1.8rem; }
+    .feat-price {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem; color: var(--gold2);
+    }
+    .feat-badge {
+      position: absolute; top: 1.2rem; left: 1.2rem;
+      background: var(--gold); color: var(--bg);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.58rem; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 0.3rem 0.7rem;
+    }
+    .feat-hover-btns {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center; gap: 1rem;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .feat-card:hover .feat-hover-btns { opacity: 1; }
+    .feat-hover-btns button {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.62rem; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 0.65rem 1.4rem;
+      cursor: pointer; transition: all 0.25s;
+      border: 1px solid var(--cream); color: var(--cream);
+      background: rgba(14,12,9,0.6);
+    }
+    .feat-hover-btns button.primary { background: var(--gold); border-color: var(--gold); color: var(--bg); }
+    .feat-hover-btns button:hover { background: var(--gold2); border-color: var(--gold2); color: var(--bg); }
+
+    /* ── PROCESS ── */
+    .process-section { padding: 7rem 6vw; }
+    .process-row {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 0; margin-top: 5rem;
+      border-top: 1px solid var(--border);
+    }
+    .process-item {
+      padding: 3rem 2rem;
+      border-right: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+    .process-item:last-child { border-right: none; }
+    .process-item:hover { background: rgba(201,150,58,0.04); }
+    .process-num {
+      font-family: 'Bodoni Moda', serif;
+      font-size: 4rem; font-weight: 700;
+      color: rgba(201,150,58,0.15);
+      display: block; line-height: 1; margin-bottom: 1.5rem;
+    }
+    .process-item h3 {
+      font-family: 'Bodoni Moda', serif;
+      font-size: 1.2rem; margin-bottom: 0.8rem;
+    }
+    .process-item p { font-size: 0.88rem; color: var(--muted); line-height: 1.8; }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials-section { padding: 7rem 6vw; background: var(--bg2); }
+    .testi-row {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+      margin-top: 4rem;
+    }
+    .testi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+      transition: border-color 0.3s;
+    }
+    .testi-card:hover { border-color: var(--gold); }
+    .testi-stars { color: var(--gold); margin-bottom: 1.2rem; letter-spacing: 0.15em; font-size: 0.9rem; }
+    .testi-quote { color: rgba(242,234,216,0.7); font-style: italic; font-size: 0.95rem; line-height: 1.85; margin-bottom: 1.8rem; }
+    .testi-author strong { display: block; font-weight: 400; font-family: 'Bodoni Moda', serif; font-size: 1rem; margin-bottom: 0.2rem; }
+    .testi-author span { font-family: 'DM Mono', monospace; font-size: 0.6rem; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; }
+
+    /* ── CTA BAND ── */
+    .cta-band {
+      padding: 8rem 6vw;
+      text-align: center;
+      background: radial-gradient(ellipse at center, rgba(201,150,58,0.08) 0%, transparent 70%);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .cta-band h2 { margin-bottom: 1.5rem; }
+    .cta-band p { color: var(--muted); max-width: 480px; margin: 0 auto 3rem; }
+    .cta-btns { display: flex; justify-content: center; gap: 1.2rem; flex-wrap: wrap; }
+
+    @media(max-width:900px){
+      .hero{grid-template-columns:1fr}
+      .hero-right{height:60vw}
+      .about-strip{grid-template-columns:1fr}
+      .featured-grid{grid-template-columns:1fr}
+      .feat-card.large{grid-column:span 1}
+      .process-row{grid-template-columns:1fr 1fr}
+      .testi-row{grid-template-columns:1fr}
+    }
+    @media(max-width:580px){
+      .hero-left{padding:4rem 5vw 3rem}
+      .process-row{grid-template-columns:1fr}
+      .section-head{flex-direction:column;gap:1.5rem;align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">Studio <span>Lumière</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="gallery.html" class="hide-mobile">Gallery</a></li>
+    <li><a href="contact.html" class="hide-mobile">Contact</a></li>
+  </ul>
+  <a href="gallery.html" class="nav-cta">Shop Paintings</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-number">01</div>
+    <span class="eyebrow fade-up">Original Art · Handcrafted · One of a Kind</span>
+    <h1 class="hero-title fade-up delay-1">
+      Where the<br>Canvas<br><em>Speaks</em>
+    </h1>
+    <p class="hero-desc fade-up delay-2">
+      Every painting in this studio is an original — conceived, crafted, and signed by hand. No prints. No reproductions. Only art that lives and breathes.
+    </p>
+    <div class="hero-actions fade-up delay-3">
+      <a href="gallery.html" class="btn-gold">Explore Gallery</a>
+      <a href="contact.html" class="btn-outline">Commission a Piece</a>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-collage">
+      <div class="collage-img c1">
+        <img src="https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=700&q=85" alt="Abstract Oil Painting"/>
+      </div>
+      <div class="collage-img c2">
+        <img src="https://images.unsplash.com/photo-1549490349-8643362247b5?w=400&q=80" alt="Landscape Painting"/>
+      </div>
+      <div class="collage-img c3">
+        <img src="https://images.unsplash.com/photo-1578301978069-14e8ece9f7eb?w=500&q=80" alt="Portrait Painting"/>
+      </div>
+      <div class="collage-img c4">
+        <img src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=700&q=85" alt="Colourful Abstract"/>
+      </div>
+      <div class="hero-pill">✦ New Works 2024</div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">48+</span>
+        <span class="hero-stat-label">Originals Available</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-inner">
+    <span>Original Oil Paintings</span><span class="dot">✦</span>
+    <span>Free Worldwide Shipping</span><span class="dot">✦</span>
+    <span>Certificate of Authenticity</span><span class="dot">✦</span>
+    <span>Custom Commissions</span><span class="dot">✦</span>
+    <span>30-Day Returns</span><span class="dot">✦</span>
+    <span>Secure Packaging</span><span class="dot">✦</span>
+    <span>Original Oil Paintings</span><span class="dot">✦</span>
+    <span>Free Worldwide Shipping</span><span class="dot">✦</span>
+    <span>Certificate of Authenticity</span><span class="dot">✦</span>
+    <span>Custom Commissions</span><span class="dot">✦</span>
+    <span>30-Day Returns</span><span class="dot">✦</span>
+    <span>Secure Packaging</span><span class="dot">✦</span>
+  </div>
+</div>
+
+<!-- ABOUT STRIP -->
+<section class="about-strip">
+  <div class="about-img-wrap">
+    <img src="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=700&q=85" alt="Artist at Work" loading="lazy"/>
+    <div class="about-tag">
+      <span>Est.</span>
+      2012
+    </div>
+  </div>
+  <div class="about-text">
+    <span class="eyebrow">The Artist</span>
+    <h2 class="section-title">Art Made with<br><em>Soul & Intention</em></h2>
+    <p>Each painting begins long before the brush touches canvas — in the silences, the wandering walks, and the quiet moments of wonder that colour the world differently.</p>
+    <p>Working primarily in oils and acrylics on linen and gallery-stretched canvas, every work is built in careful layers, signed, and documented for provenance.</p>
+    <div class="about-facts">
+      <div><span class="fact-num">12+</span><span class="fact-label">Years Painting</span></div>
+      <div><span class="fact-num">340</span><span class="fact-label">Works Sold</span></div>
+      <div><span class="fact-num">18</span><span class="fact-label">Countries Reached</span></div>
+      <div><span class="fact-num">100%</span><span class="fact-label">Originals Only</span></div>
+    </div>
+    <a href="gallery.html" class="btn-gold">View Full Collection</a>
+  </div>
+</section>
+
+<!-- FEATURED WORKS -->
+<section class="featured-section">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">The Collection</span>
+      <h2 class="section-title">Featured <em>Works</em></h2>
+    </div>
+    <a href="gallery.html" class="btn-outline">See All →</a>
+  </div>
+  <div class="featured-grid">
+    <!-- Large card -->
+    <div class="feat-card large" onclick="window.location='gallery.html'">
+      <div class="feat-card-img">
+        <img src="https://images.unsplash.com/photo-1574182245530-967d9b3831af?w=900&q=85" alt="Golden Landscape"/>
+      </div>
+      <div class="feat-overlay">
+        <span class="feat-cat">Landscape · Oil on Linen</span>
+        <h3 class="feat-title">Golden Hour, Valley Study</h3>
+        <span class="feat-price">₹ 72,000</span>
+      </div>
+      <div class="feat-badge">Featured</div>
+      <div class="feat-hover-btns">
+        <button class="primary" onclick="event.stopPropagation();addToCart('Golden Hour')">Add to Cart</button>
+        <button onclick="event.stopPropagation();window.location='gallery.html'">View Details</button>
+      </div>
+    </div>
+    <!-- Small card -->
+    <div class="feat-card" onclick="window.location='gallery.html'">
+      <div class="feat-card-img">
+        <img src="https://images.unsplash.com/photo-1547891654-e66ed7ebb968?w=600&q=80" alt="Abstract"/>
+      </div>
+      <div class="feat-overlay">
+        <span class="feat-cat">Abstract · Acrylic</span>
+        <h3 class="feat-title">Fire Within</h3>
+        <span class="feat-price">₹ 48,000</span>
+      </div>
+      <div class="feat-hover-btns">
+        <button class="primary" onclick="event.stopPropagation();addToCart('Fire Within')">Add to Cart</button>
+      </div>
+    </div>
+    <!-- Small card -->
+    <div class="feat-card" onclick="window.location='gallery.html'">
+      <div class="feat-card-img">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="Nature"/>
+      </div>
+      <div class="feat-overlay">
+        <span class="feat-cat">Nature · Watercolour</span>
+        <h3 class="feat-title">Morning Mist</h3>
+        <span class="feat-price">₹ 26,000</span>
+      </div>
+      <div class="feat-hover-btns">
+        <button class="primary" onclick="event.stopPropagation();addToCart('Morning Mist')">Add to Cart</button>
+      </div>
+    </div>
+    <!-- Small card -->
+    <div class="feat-card" onclick="window.location='gallery.html'">
+      <div class="feat-card-img">
+        <img src="https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?w=600&q=80" alt="Light Painting"/>
+      </div>
+      <div class="feat-overlay">
+        <span class="feat-cat">Nature · Oil on Canvas</span>
+        <h3 class="feat-title">Through the Trees</h3>
+        <span class="feat-price">₹ 55,000</span>
+      </div>
+      <div class="feat-hover-btns">
+        <button class="primary" onclick="event.stopPropagation();addToCart('Through the Trees')">Add to Cart</button>
+      </div>
+    </div>
+    <!-- Large card -->
+    <div class="feat-card large" onclick="window.location='gallery.html'">
+      <div class="feat-card-img">
+        <img src="https://images.unsplash.com/photo-1551913902-c92207136625?w=900&q=85" alt="Seascape"/>
+      </div>
+      <div class="feat-overlay">
+        <span class="feat-cat">Seascape · Oil on Canvas</span>
+        <h3 class="feat-title">The Endless Shore</h3>
+        <span class="feat-price">₹ 85,000</span>
+      </div>
+      <div class="feat-badge" style="background:var(--rust)">Sold</div>
+      <div class="feat-hover-btns">
+        <button onclick="event.stopPropagation();window.location='contact.html'">Inquire Similar</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process-section">
+  <div style="text-align:center; margin-bottom:0;">
+    <span class="eyebrow">How It Works</span>
+    <h2 class="section-title">From Studio to <em>Your Walls</em></h2>
+  </div>
+  <div class="process-row">
+    <div class="process-item">
+      <span class="process-num">01</span>
+      <h3>Browse & Choose</h3>
+      <p>Explore the gallery. Filter by style, size, or medium. Every painting has full specifications and high-resolution images.</p>
+    </div>
+    <div class="process-item">
+      <span class="process-num">02</span>
+      <h3>Secure Purchase</h3>
+      <p>Simple checkout with Razorpay or bank transfer. A 50% deposit holds any work; balance before dispatch.</p>
+    </div>
+    <div class="process-item">
+      <span class="process-num">03</span>
+      <h3>Packed with Care</h3>
+      <p>Triple-wrapped, corner-protected, and crated for transit. Every work arrives in the same condition it left the studio.</p>
+    </div>
+    <div class="process-item">
+      <span class="process-num">04</span>
+      <h3>Hang & Enjoy</h3>
+      <p>Your painting arrives with a signed certificate of authenticity, hanging guide, and care instructions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <div style="text-align:center">
+    <span class="eyebrow">Collector Stories</span>
+    <h2 class="section-title">What People <em>Say</em></h2>
+  </div>
+  <div class="testi-row">
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-quote">"The painting arrived immaculately packaged and is even more beautiful in person. It has completely transformed our living room. Truly museum-worthy art."</p>
+      <div class="testi-author"><strong>Priya Sharma</strong><span>Mumbai · Landscape Collector</span></div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-quote">"I commissioned a portrait and the result was beyond anything I imagined. Communication was excellent, delivery was on time, quality is breathtaking."</p>
+      <div class="testi-author"><strong>Rahul Menon</strong><span>Bengaluru · Commission Client</span></div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-quote">"I've purchased three pieces now. Each one is an absolute conversation-starter. The certificate of authenticity makes it feel like a real collector's piece."</p>
+      <div class="testi-author"><strong>Ananya Krishnan</strong><span>Chennai · Regular Collector</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<section class="cta-band">
+  <span class="eyebrow">Ready to Begin?</span>
+  <h2 class="section-title">Find Your <em>Perfect</em> Painting</h2>
+  <p>Browse the full collection of original works, or get in touch to commission something made just for you.</p>
+  <div class="cta-btns">
+    <a href="gallery.html" class="btn-gold">Browse Gallery</a>
+    <a href="contact.html" class="btn-outline">Commission a Painting</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="logo">Studio <span>Lumière</span></a>
+      <p>Original paintings crafted with intention and shipped worldwide. Each piece tells a story — find the one that speaks to yours.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigate</h4>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="contact.html">Commission</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Styles</h4>
+      <ul>
+        <li><a href="gallery.html">Landscapes</a></li>
+        <li><a href="gallery.html">Abstracts</a></li>
+        <li><a href="gallery.html">Portraits</a></li>
+        <li><a href="gallery.html">Nature</a></li>
+        <li><a href="gallery.html">Seascapes</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="mailto:hello@studiolumiere.art">hello@studiolumiere.art</a></li>
+        <li><a href="#">WhatsApp</a></li>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Pinterest</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2024 Studio Lumière. All rights reserved.</span>
+    <div class="footer-social">
+      <a href="#">Instagram</a>
+      <a href="#">Pinterest</a>
+      <a href="#">WhatsApp</a>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let cart = [];
+function addToCart(name) {
+  cart.push(name);
+  const t = document.getElementById('toast');
+  t.textContent = `✦ "${name}" added to cart (${cart.length})`;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+</script>
+</body>
+</html>
