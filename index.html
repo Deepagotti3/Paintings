@@ -640,7 +640,7 @@ let cart = [];
 function addToCart(name) {
   cart.push(name);
   const t = document.getElementById('toast');
-  t.textContent = `✦ "${name}" added to cart (${cart.length})`;
+  t.textContent = `✦ "${name}" added to cart (${cart .length})`;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3200);
 }
